@@ -1272,6 +1272,10 @@ bool IMDDecoder::assessAudioProperties() {
 		}
 
 		_frameRate = Common::Rational(_soundFreq, _soundSliceSize);
+		
+		if(_soundSliceSize==6300){ //exception for 16-bit sound
+			_frameRate = Common::Rational(_soundFreq, _soundSliceSize/2);
+		}
 
 		_hasSound     = true;
 		_soundEnabled = true;
@@ -1609,13 +1613,30 @@ void IMDDecoder::nextSoundSlice(bool hasNextCmd) {
 	}
 
 	// Read, convert, queue
-
+/*
 	byte *soundBuf = (byte *)malloc(_soundSliceSize);
 
 	_stream->read(soundBuf, _soundSliceSize);
 	unsignedToSigned(soundBuf, _soundSliceSize);
 
 	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
+*/
+	int size = _soundSliceSize;
+	Common::SeekableReadStream *data = _stream->readStream(size);
+	Audio::AudioStream *sliceStream = 0;
+
+	int flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	
+	if(size!=6300){
+		flags=Audio::FLAG_UNSIGNED;
+		sliceStream = Audio::makeRawStream(data, _soundFreq, flags, DisposeAfterUse::YES);
+	}
+	else{
+		sliceStream = Audio::makeRawStream(data, _soundFreq, flags, DisposeAfterUse::YES);
+	}
+
+	if (sliceStream)
+		_audioStream->queueAudioStream(sliceStream);
 }
 
 bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
@@ -1636,14 +1657,31 @@ bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
 	}
 
 	// Read, convert, queue
-
+/*
 	byte *soundBuf = (byte *)malloc(dataLength);
 
 	_stream->read(soundBuf, dataLength);
 	unsignedToSigned(soundBuf, dataLength);
 
 	_audioStream->queueBuffer(soundBuf, dataLength, DisposeAfterUse::YES, 0);
+*/
+	int size = dataLength;
+	Common::SeekableReadStream *data = _stream->readStream(size);
+	Audio::AudioStream *sliceStream = 0;
 
+	int flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	
+	if(_soundSliceSize!=6300){
+		flags=Audio::FLAG_UNSIGNED;
+		sliceStream = Audio::makeRawStream(data, _soundFreq, flags, DisposeAfterUse::YES);
+	}
+	else{
+		sliceStream = Audio::makeRawStream(data, _soundFreq, flags, DisposeAfterUse::YES);
+	}
+
+	if (sliceStream)
+		_audioStream->queueAudioStream(sliceStream);
+	
 	return _soundStage == kSoundLoaded;
 }
 
@@ -1657,7 +1695,11 @@ void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
 
 	memset(soundBuf, 0, _soundSliceSize);
 
-	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
+	int flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	if(_soundSliceSize!=6300){
+		flags=0;
+	}
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, flags);
 }
 
 uint32 IMDDecoder::getFlags() const {
