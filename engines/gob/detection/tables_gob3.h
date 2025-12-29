@@ -139,6 +139,19 @@
 {
 	{
 		"gob3",
+		"v1.00",
+		AD_ENTRY1s("intro.stk", "cd76c469648aeb24d8292d08265f0018", 655099),
+		RU_RUS,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesCD,
+	0, 0, 0
+},
+{
+	{
+		"gob3",
 		"",
 		AD_ENTRY1("intro.stk", "8d28ce1591b0e9cc79bf41cad0fc4c9c"),
 		UNK_LANG,
