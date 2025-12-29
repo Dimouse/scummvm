@@ -380,6 +380,10 @@ Common::Error GobEngine::run() {
 	case Common::RU_RUS:
 		if (_gameType == kGameTypeWoodruff || _gameType == kGameTypeBargon)
 			_global->_language = kLanguageBritish;
+		else if(_gameType == kGameTypeGob1)
+			_global->_language = kLanguageGerman;
+		else if(_gameType == kGameTypeGob3)
+			_global->_language = kLanguageSpanish;
 		else
 			_global->_language = kLanguageFrench;
 		break;
