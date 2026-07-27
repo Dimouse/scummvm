@@ -52,7 +52,7 @@ endif
 endif
 
 ifeq "$(HAVE_CLANG)" "1"
-	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
+	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-four-char-constants
 	# We use a anonymous nested type declaration in an anonymous union in
 	# common/str.h. This is no standard construct and clang warns about it.
 	# It works for all our target systems though, thus we simply disable that
@@ -155,3 +155,6 @@ CMakeLists.txt: devtools/create_project/cmake/build/create_project config.mk
 cmake: CMakeLists.txt
 	cmake -H. -Bbuild
 	cmake --build build
+
+test-games: $(EXECUTABLE)
+	devtools/run_event_recorder_tests.py --xunit-output=$(EXECUTABLE).test-results.xml

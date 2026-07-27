@@ -26,6 +26,7 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -122,6 +123,10 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 				// We need to wrap the file in a substream to make sure the size is right.
 				file = new Common::SeekableSubReadStream(file, file->pos(), waveSize + file->pos(), DisposeAfterUse::YES);
 				_stream = Audio::makeRawStream(file, waveRate, waveFlags, DisposeAfterUse::YES);
+			} else if (waveType == 2 && BaseEngine::instance().getGameId() == "wayoflove") {
+				// One case in the end of game: 'The Way Of Love: Sub Zero'
+                // MSADPCM WAVE is not well supported in ScummVM
+				_stream = nullptr;
 			} else {
 				error("BSoundBuffer::loadFromFile - WAVE not supported yet for %s with type %d", filename, waveType);
 			}
@@ -161,7 +166,7 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 		}
 		if (_looping) {
 			if (_loopStart != 0) {
-				Audio::AudioStream *loopStream = new Audio::SubLoopingAudioStream(_stream, 0, Audio::Timestamp(_loopStart, _stream->getRate()), _stream->getLength(), DisposeAfterUse::NO);
+				Audio::AudioStream *loopStream = new Audio::SubLoopingAudioStream(_stream, 0, Audio::Timestamp((_loopStart * 1000) / _stream->getRate(), _stream->getRate()), _stream->getLength(), DisposeAfterUse::NO);
 				g_system->getMixer()->playStream(type, _handle, loopStream, -1, _volume, _pan, DisposeAfterUse::YES);
 			} else {
 				Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
@@ -221,7 +226,7 @@ bool BaseSoundBuffer::pause() {
 uint32 BaseSoundBuffer::getLength() {
 	if (_stream) {
 		uint32 len = _stream->getLength().msecs();
-		return len * 1000;
+		return len;
 	}
 	return 0;
 }
@@ -264,7 +269,7 @@ bool BaseSoundBuffer::isPlaying() {
 uint32 BaseSoundBuffer::getPosition() {
 	if (_stream && _handle) {
 		uint32 pos = g_system->getMixer()->getSoundElapsedTime(*_handle);
-		return pos;
+		return pos + _startPos;
 	}
 	return 0;
 }

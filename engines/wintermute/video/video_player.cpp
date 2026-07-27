@@ -112,6 +112,9 @@ bool VideoPlayer::initialize(const Common::String &filename, const Common::Strin
 	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
 
 	if (!_aviDecoder->isVideoLoaded()) {
+		// W/A: Missing DX50 decoder support for 'Looky' game.
+		if (BaseEngine::instance().getGameId() == "looky")
+			return STATUS_OK;
 		return STATUS_FAILED;
 	}
 
@@ -144,7 +147,8 @@ bool VideoPlayer::update() {
 	if (_aviDecoder->endOfVideo()) {
 		_playbackStarted = false;
 		if (_freezeGame) {
-			_game->unfreeze();
+			stop();
+			return STATUS_OK;
 		}
 	}
 	if (!_aviDecoder->endOfVideo() && _aviDecoder->getTimeToNextFrame() == 0) {
@@ -243,12 +247,10 @@ bool VideoPlayer::play(TVideoPlayback type, int x, int y, bool freezeMusic) {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::stop() {
-	_aviDecoder->close();
-
-	cleanup();
-
 	if (_freezeGame)
 		_game->unfreeze();
+
+	cleanup();
 
 	return STATUS_OK;
 }

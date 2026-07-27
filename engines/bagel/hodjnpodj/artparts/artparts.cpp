@@ -67,7 +67,7 @@ bool CMainWindow::tempFramed;
  */
 class ArtSoundArchive : public Common::Archive {
 public:
-	bool hasFile(const Common::Path &path) const {
+	bool hasFile(const Common::Path &path) const override {
 		Common::String pathStr = path.toString();
 		if (pathStr.hasPrefixIgnoreCase("art/")) {
 			pathStr = pathStr.c_str() + 4;
@@ -87,7 +87,7 @@ public:
 		return Common::ArchiveMemberPtr();
 	}
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const {
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override {
 		Common::String pathStr = path.toString();
 		if (pathStr.hasPrefixIgnoreCase("art/")) {
 			pathStr = pathStr.c_str() + 4;
@@ -1400,7 +1400,7 @@ bool CMainWindow::LoadArtWork() {
 		return false;
 	}
 
-	Common::sprintf_s(bufName, ".\\art\\%s", ArtName);
+	Common::sprintf_s(bufName, "art\\%s", ArtName);
 	Common::sprintf_s(szCurrentArt, "%s", bufName);                  // copy to a global for use in OnPaint
 
 	(*pSourceDoc).OpenDocument(bufName);

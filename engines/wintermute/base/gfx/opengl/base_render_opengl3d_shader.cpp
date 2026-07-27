@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/gfx/3dlight.h"
 #include "engines/wintermute/platform_osystem.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/opengl/system_headers.h"
 
 #include "common/config-manager.h"
@@ -62,6 +63,7 @@ BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
 	glDeleteBuffers(1, &_rectangleVBO);
 	glDeleteBuffers(1, &_simpleShadowVBO);
 	glDeleteBuffers(1, &_postfilterVBO);
+	glDeleteBuffers(1, &_gammaVBO);
 }
 
 bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed) {
@@ -183,6 +185,16 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_postfilterShader->enableVertexAttribute("position", _postfilterVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 0);
 	_postfilterShader->enableVertexAttribute("texcoord", _postfilterVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 8);
 
+	glGenBuffers(1, &_gammaVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _gammaVBO);
+	glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(GLfloat), quadVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	static const char *gammaAttributes[] = { "position", "texcoord", nullptr };
+	_gammaShader = OpenGL::Shader::fromFiles("wme_gamma", gammaAttributes);
+	_gammaShader->enableVertexAttribute("position", _gammaVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 0);
+	_gammaShader->enableVertexAttribute("texcoord", _gammaVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 8);
+
 	glGenTextures(1, &_postfilterTexture);
 	glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -195,7 +207,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_width = width;
 	_height = height;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	setViewport(0, 0, width, height);
 
@@ -263,7 +275,7 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 
 		_alphaRef = 0.0f;
 
-		glFrontFace(GL_CCW);  // WME DX have CW
+		glFrontFace(GL_CW);  // WME DX have CCW
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_STENCIL_TEST);
 	}
@@ -505,7 +517,9 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Common::Rect
 		glDisable(GL_BLEND);
 	}
 
-	if (_lastTexture != texture) {
+	GLint boundTexture;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+	if (_lastTexture != texture || (GLuint)boundTexture != texture->getTextureName()) {
 		_lastTexture = texture;
 		glBindTexture(GL_TEXTURE_2D, texture->getTextureName());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1150,6 +1164,30 @@ bool BaseRenderOpenGL3DShader::setProjectionTransform(const DXMatrix &transform)
 }
 
 void BaseRenderOpenGL3DShader::postfilter() {
+	// This is for game 'Oknytt'
+	if (_gamma != -1) {
+		setup2D();
+		glViewport(0, 0, _width, _height);
+		glDisable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+
+		_gammaShader->use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
+		glUniform1i(_gammaShader->getUniformLocation("tex"), 0);
+		_gammaShader->setUniform1f("gammaValue", _gamma);
+
+		g_system->presentBuffer();
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return;
+	}
+
 	if (_postFilterMode == kPostFilterOff)
 		return;
 

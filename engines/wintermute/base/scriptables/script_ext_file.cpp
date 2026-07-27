@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/file/base_savefile_manager_file.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -207,13 +208,25 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Copy") == 0) {
 		stack->correctParams(2);
-		/* const char *dest = */ stack->pop()->getString();
+		const char *dest = stack->pop()->getString();
 		/* bool overwrite = */ stack->pop()->getBool(true);
 
-		// Known game that need this:
-		// * Space Madness (to copy bonus wallpapers from data.dcp to /saves/ folder)
-		// * games by Rootfix intertainment (to save temporary screenshot as savegame screenshot)
-		warning("SXFile-Method: Copy not supported");
+		if (BaseEngine::instance().getGameId() == "spacemadness") {
+			// 'Space Madness' (to copy bonus wallpapers from data.dcp to /saves/ folder)
+		} else if (BaseEngine::instance().getGameId() == "goldencalf" ||
+				   BaseEngine::instance().getGameId() == "msos") {
+			// 'The Golden Calf' and 'Monday Starts on Saturday' (to save temporary screenshot as savegame screenshot)
+			_readFile = _game->_fileManager->openFile(_filename);
+			if (_readFile) {
+				Common::WriteStream *stream = openSfmFileForWrite(dest);
+				stream->writeStream(_readFile);
+				delete stream;
+				close();
+				stack->pushBool(true);
+			}
+		} else {
+			warning("SXFile-Method: Copy not supported");
+		}
 
 		stack->pushBool(false);
 		return STATUS_OK;
@@ -730,7 +743,9 @@ bool SXFile::setPos(uint32 pos, int whence) {
 	if (_mode == 1 && _readFile) {
 		return _readFile->seek(pos, whence);
 	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
-		error("SXFile - seeking in WriteFile not supported");
+		if (BaseEngine::instance().getGameId() != "royalmahjong") {
+			error("SXFile - seeking in WriteFile not supported");
+		}
 		return false;
 //		return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
 	} else {

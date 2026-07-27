@@ -48,10 +48,10 @@ public:
 	Common::String getText() { return Common::String(_plainText); }
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
 
 	Common::String formatInfo() override;
 
-private:
 	Common::U32String _plainText;
 	Graphics::PixelFormat _pf32;
 	Picture *_picture;

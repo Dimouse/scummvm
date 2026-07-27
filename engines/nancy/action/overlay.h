@@ -48,6 +48,7 @@ public:
 
 	void init() override;
 	void handleInput(NancyInput &input) override;
+	void updateGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -56,7 +57,7 @@ public:
 
 	uint16 _transparency = kPlayOverlayPlain;
 	uint16 _hasSceneChange = kPlayOverlaySceneChange;
-	uint16 _enableHotspot = kPlayOverlayNoHotspot;
+	uint16 _enableHotspotNancy2 = kPlayOverlayNoHotspot;
 	uint16 _overlayType = kPlayOverlayAnimated;
 	uint16 _playDirection = kPlayOverlayForward;
 	uint16 _loop = kPlayOverlayOnce;
@@ -68,7 +69,7 @@ public:
 	SceneChangeDescription _sceneChange;
 	MultiEventFlagDescription _flagsOnTrigger;
 
-	Nancy::SoundDescription _sound;
+	SoundDescription _sound;
 
 	// Describes a single frame in this animation
 	Common::Array<Common::Rect> _srcRects;
@@ -82,10 +83,12 @@ public:
 	bool _isInterruptible;
 	bool _usesAutotext;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override;
 	bool isViewportRelative() const override { return true; }
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+
+protected:
+	Common::String getRecordTypeName() const override;
 
 	Graphics::ManagedSurface _fullSurface;
 };

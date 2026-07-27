@@ -49,20 +49,22 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
-																			 _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
-																			 _shadowIntensity(0),
+																			 _gameDescription(gameDesc),
+																			 _resourceManager(version()),
+																			 _soundManager(this, system->getMixer()), _pictureCacheId(1),
 																			 _processes(MaxProcesses),
-																			 _mjpgPlayer(), _filmStarted(0),
+																			 _sharedStorageIndex(-2),
+																			 _shadowIntensity(0), _mjpgPlayer(),
+																			 _filmStarted(0),
 																			 _currentScreen(),
 																			 _currentCharacter(),
-																			 _defaultMouseCursor(),
 																			 _nextScreenType(ScreenLoadingType::Normal),
-																			 _mouse(400, 300),
-																			 _userEnabled(true), _systemUserEnabled(true),
+																			 _defaultMouseCursor(),
+																			 _mouse(400, 300), _userEnabled(true),
+																			 _systemUserEnabled(true),
 																			 _random("agds"),
-																			 _inventoryRegion(),
-																			 _soundManager(this, system->getMixer()),
 																			 _inventory(this),
+																			 _inventoryRegion(),
 																			 _dialog(this),
 																			 _tellTextTimer(0),
 																			 _syncSoundId(-1),
@@ -71,6 +73,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 																			 _curtainScreen(0),
 																			 _fastMode(true),
 																			 _hintMode(false) {
+	debug("agds engine version %d", version());
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -144,9 +147,13 @@ bool AGDSEngine::load() {
 
 	Common::INIFile::SectionKeyList values = config.getKeys("core");
 	for (Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
-		if (i->key == "path")
-			if (!_resourceManager.addPath(Common::Path{i->value}))
+		if (i->key == "path") {
+			auto path = i->value;
+			if (path.hasPrefix(".\\"))
+				path = path.substr(2);
+			if (!_resourceManager.addPath(Common::Path{path, '\\'}))
 				return false;
+		}
 	}
 
 	if (!_data.open("data.adb"))
@@ -190,7 +197,7 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 	if (entryName.empty())
 		return Common::String();
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_data.getEntry(entryName));
-	return ResourceManager::loadText(*stream);
+	return _resourceManager.loadText(*stream);
 }
 
 ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
@@ -200,7 +207,7 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 	if (!stream)
 		error("no database entry for %s\n", clone.c_str());
 
-	ObjectPtr object(new Object(name, *stream, v2()));
+	ObjectPtr object(new Object(name, *stream, version()));
 	object->allowInitialise(allowInitialise);
 	if (!prototype.empty()) {
 		object->persistent(false);
@@ -244,7 +251,7 @@ void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 			return;
 		}
 		if (!process) {
-			process = ProcessPtr(new Process(this, object, ip, v2()));
+			process = ProcessPtr(new Process(this, object, ip, version(), language()));
 			process->run();
 			return;
 		}
@@ -396,8 +403,10 @@ Console *AGDSEngine::getConsole() {
 void AGDSEngine::newGame() {
 	SystemVariable *doneVar = getSystemVariable("done_resources");
 	Common::String done = doneVar->getString();
-	debug("running engine resource dtor: %s", done.c_str());
-	runObject(done);
+	if (!done.empty()) {
+		debug("running engine resource dtor: %s", done.c_str());
+		runObject(done);
+	}
 
 	_patches.clear();
 	_objectPatches.clear();
@@ -409,8 +418,10 @@ void AGDSEngine::newGame() {
 
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	Common::String init = initVar->getString();
-	debug("running engine resource ctor: %s", init.c_str());
-	runObject(init);
+	if (!init.empty()) {
+		debug("running engine resource ctor: %s", init.c_str());
+		runObject(init);
+	}
 }
 
 void AGDSEngine::curtain(const Common::String &process, int screen, int sound, int music, bool updateGlobals) {
@@ -856,7 +867,7 @@ AnimationPtr AGDSEngine::loadAnimation(const Common::String &name) {
 	debug("loadAnimation %s", name.c_str());
 
 	Common::SharedPtr<Animation> animation(new Animation(this, name));
-	if (v2()) {
+	if (versionAtLeast(kAGDSVersionNibiru2511)) {
 		debug("v2 stub");
 		return animation;
 	}
@@ -884,7 +895,7 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 
 	_currentCharacter.reset(new Character(this, id));
 	auto resName = loadText(filename);
-	if (v2()) {
+	if (versionAtLeast(kAGDSVersionNibiru2511)) {
 		debug("character resource name: %s, stub\n", resName.c_str());
 		_currentCharacter->associate(object);
 		return;
@@ -918,7 +929,7 @@ Graphics::ManagedSurface *AGDSEngine::loadFromCache(int id) const {
 }
 
 void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
-	if (v2()) {
+	if (versionAtLeast(kAGDSVersionNibiru2511)) {
 		debug("loadTTF %d %s, pixelSize: %d", id, name.c_str(), gh);
 #ifdef USE_FREETYPE2
 		_fonts[id].reset(Graphics::loadTTFFontFromArchive(name, gh));
@@ -1434,8 +1445,22 @@ int AGDSEngine::getRandomNumber(int max) {
 	return max > 0 ? _random.getRandomNumber(max - 1) : 0;
 }
 
-bool AGDSEngine::v2() const {
-	return _gameDescription->flags & AGDS_V2;
+int AGDSEngine::version() const {
+	if (_gameDescription->flags & ADGF_DEMO)
+		return kAGDSVersionDemo2283;
+	if (_gameDescription->flags & AGDS_2299)
+		return kAGDSVersionBlackMirror2299;
+	if (_gameDescription->flags & AGDS_2511)
+		return kAGDSVersionNibiru2511;
+	return kAGDSVersionBlackMirror2296;
+}
+
+bool AGDSEngine::versionAtLeast(int target) const {
+	return version() >= target;
+}
+
+Common::Language AGDSEngine::language() const {
+	return _gameDescription->language;
 }
 
 } // End of namespace AGDS

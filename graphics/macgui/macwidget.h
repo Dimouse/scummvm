@@ -81,11 +81,13 @@ public:
 	}
 
 	Common::Point getAbsolutePos();
+	Common::Rect getAbsoluteDimensions();
 	MacWidget *findEventHandler(Common::Event &event, int dx, int dy);
 
 	void removeWidget(MacWidget *child, bool del = true);
 
-	Graphics::ManagedSurface *getSurface() { return _composeSurface; }
+	virtual Graphics::ManagedSurface *getSurface() final { return _composeSurface; }
+	void setSurface(Graphics::ManagedSurface *srf, DisposeAfterUse::Flag dispose);
 
 protected:
 	uint16 _border;
@@ -96,6 +98,7 @@ protected:
 	uint32 _fgcolor, _bgcolor;
 
 	Graphics::ManagedSurface *_composeSurface;
+	DisposeAfterUse::Flag _dispose;
 
 	bool _contentIsDirty;
 
