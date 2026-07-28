@@ -391,6 +391,21 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	{
+		// Darkside of Xeen, Russian fan-translation
+		{
+			"darksideofxeen",
+			nullptr,
+			AD_ENTRY1s("dark.cc","df9377c58140bea3e21e9099b7ab9158", 11260653),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO_XEEN
+		},
+		GType_DarkSide,
+		0
+	},
+
+	{
 		// Swords of Xeen
 		{
 			"swordsofxeen",
