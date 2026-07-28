@@ -113,7 +113,16 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 				}
 			} else {
 				if (!isNumeric) {
-					line += nonEnToLower(keyState.ascii);
+					if (line.empty() || line.hasSuffix(" ")) {
+						if(nonEnToLower(keyState.ascii)>=0xE0){
+						  line += nonEnToLower(keyState.ascii) - 80;
+						}
+						else{
+						  line += nonEnToLower(keyState.ascii) - 32;						
+						}
+					} else {
+						line += nonEnToLower(keyState.ascii);
+					}
 				} else {
 					line += keyState.ascii;
 				}
@@ -212,6 +221,27 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 	return result;
 }
 
+void toLowercase_rus(Common::String *s) {
+	uint32 sz = s->size();
+	unsigned char *buf = (unsigned char*)s->begin();
+
+	uint32 i = 0;
+	for ( ; i < sz; ++i) {
+		unsigned char ch = buf[i];
+		if (ch >=0x90 && ch < 0xA0)
+		{
+			unsigned char newCh = ch+80; 
+			buf[i] = newCh;
+		}
+		else if (ch >=0x80 && ch < 0x90)
+		{
+			unsigned char newCh = ch+32; 
+			buf[i] = newCh;
+		}
+
+	}
+}
+
 int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
 	FileManager &files = *_vm->_files;
@@ -262,6 +292,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 
 			if (Common::RU_RUS == g_vm->getLanguage() && GType_Clouds == g_vm->getGameID()) {
 				for (uint idx = 0; idx < 59; ++idx) {
+					toLowercase_rus(&line);
 					if (!line.compareToIgnoreCase(Res.CLOUDS_MIRROR_LOCATIONS[idx])) {
 						result = idx + 1;
 						sound.playFX(_vm->_files->_ccNum ? 35 : 61);
