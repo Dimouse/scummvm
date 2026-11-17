@@ -725,7 +725,7 @@ void Party::giveTreasure() {
 #ifdef USE_TTS
 	_vm->stopTextToSpeech();
 #endif
-	w.writeString(Common::String::format(Res.PARTY_FOUND, _treasure._gold, _treasure._gems));
+	w.writeString(Common::String::format(Res.PARTY_FOUND, (unsigned long)_treasure._gold, (unsigned long)_treasure._gems));
 	w.update();
 
 	if (_vm->_mode != MODE_COMBAT)
