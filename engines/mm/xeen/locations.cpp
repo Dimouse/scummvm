@@ -42,7 +42,7 @@ namespace Locations {
 
 	static const uint8 kTempleOptionsCount = 3;
 
-	//static const uint8 kTrainingButtonCount = 2;
+	static const uint8 kTrainingButtonCount = 2;
 	static const uint8 kTrainingIneligibleInfoCount = 2;
 	static const uint8 kTrainingEligibleInfoCount = 4;
 #endif
@@ -1348,7 +1348,7 @@ Common::String TrainingLocation::createLocationText(Character &ch) {
 		// Need more experience
 		int nextLevel = ch._level._permanent + 1;
 		msg = Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
-			ch._name.c_str(), _experienceToNextLevel, nextLevel);
+			ch._name.c_str(), (unsigned long)_experienceToNextLevel, nextLevel);
 	} else if (ch._level._permanent >= maxLevelAtLocation) {
 		// At maximum level
 		_experienceToNextLevel = 1;
