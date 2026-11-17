@@ -464,9 +464,9 @@ DarkSideMenuDialog::~DarkSideMenuDialog() {
 }
 
 void DarkSideMenuDialog::loadButtons() {
-	addButton(Common::Rect(124, 87, 177, 97), Common::KEYCODE_s, nullptr, kDarksideWorldStart);
-	addButton(Common::Rect(126, 98, 173, 108), Common::KEYCODE_l, nullptr, kDarksideWorldLoad);
-	addButton(Common::Rect(91, 110, 209, 120), Common::KEYCODE_c, nullptr, kDarksideWorldCredits);
+	addButton(Common::Rect(124, 87, 177, 97), Res.KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME, nullptr, kDarksideWorldStart);
+	addButton(Common::Rect(126, 98, 173, 108), Res.KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME, nullptr, kDarksideWorldLoad);
+	addButton(Common::Rect(91, 110, 209, 120), Res.KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS, nullptr, kDarksideWorldCredits);
 	addButton(Common::Rect(85, 121, 216, 131), Common::KEYCODE_o, nullptr, kDarksideWorldOther);
 }
 
@@ -558,9 +558,9 @@ WorldMenuDialog::~WorldMenuDialog() {
 
 void WorldMenuDialog::loadButtons() {
 	_buttonSprites.load("start.icn");
-	addButton(Common::Rect(93, 53, 227, 73), Common::KEYCODE_s, &_buttonSprites, kDarksideWorldStart);
-	addButton(Common::Rect(93, 78, 227, 98), Common::KEYCODE_l, &_buttonSprites, kDarksideWorldLoad);
-	addButton(Common::Rect(93, 103, 227, 123), Common::KEYCODE_c, &_buttonSprites, kDarksideWorldCredits);
+	addButton(Common::Rect(93, 53, 227, 73), Res.KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME, &_buttonSprites, kDarksideWorldStart);
+	addButton(Common::Rect(93, 78, 227, 98), Res.KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME, &_buttonSprites, kDarksideWorldLoad);
+	addButton(Common::Rect(93, 103, 227, 123), Res.KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS, &_buttonSprites, kDarksideWorldCredits);
 	addButton(Common::Rect(93, 128, 227, 148), Common::KEYCODE_o, &_buttonSprites, kDarksideWorldOther);
 }
 
