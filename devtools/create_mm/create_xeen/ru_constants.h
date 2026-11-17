@@ -148,7 +148,7 @@ public:
 	}
 
 	const char **GAME_NAMES() {
-		static const char *_gameNames[] = { "\x8E\xA1\xAB\xA0\xAA\xA0", "Darkside", "World" }; // "Облака", "Darkside", "World"
+		static const char *_gameNames[] = { "\x8E\xA1\xAB\xA0\xAA\xA0", "\x91\xE3\xAC\xA5\xE0\xAA\xA8", "\x8C\xA8\xE0" }; // "Облака", "Сумерки", "Мир"
 		return _gameNames;
 	}
 
@@ -763,11 +763,11 @@ public:
 	}
 
 	const char *WORLD_GAME_TEXT() {
-		return "World";
+		return "\x8C\xA8\xE0"; // "Мир"
 	}
 
 	const char *DARKSIDE_GAME_TEXT() {
-		return "Darkside";
+		return "\x91\xE3\xAC\xA5\xE0\xAA\xA8"; // "Сумерки"
 	}
 
 	const char *CLOUDS_GAME_TEXT() {
@@ -1427,7 +1427,7 @@ public:
 	}
 
 	const char *DARKSIDE_OF_XEEN_LINE() {
-		return "\b \b*-- \f04Darkside of Xeen\fd --";
+		return "\b \b*-- \f04\x91\xE3\xAC\xA5\xE0\xAA\xA8 \x8A\xE1\xA8\xAD\xA0\fd --"; // "\b \b*-- \f04Сумерки Ксина\fd --"
 	}
 
 	const char *SWORDS_OF_XEEN_LINE() {
