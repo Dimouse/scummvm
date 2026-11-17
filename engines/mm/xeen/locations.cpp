@@ -1180,7 +1180,7 @@ Common::String TempleLocation::createLocationText(Character &ch) {
 	_healCost += _v6 + _v5;
 
 	return Common::String::format(Res.TEMPLE_TEXT, ch._name.c_str(),
-		_healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
+		(long)_healCost, (long)_donation, XeenEngine::printK(_uncurseCost).c_str(),
 		XeenEngine::printMil(party._gold).c_str());
 }
 
@@ -1357,7 +1357,7 @@ Common::String TrainingLocation::createLocationText(Character &ch) {
 		// Eligble for level increase
 		uint cost = ch._level._permanent * ch._level._permanent * 10;
 		msg = Common::String::format(Res.ELIGIBLE_FOR_LEVEL,
-			ch._name.c_str(), ch._level._permanent + 1, cost);
+			ch._name.c_str(), ch._level._permanent + 1, (unsigned long)cost);
 	}
 
 	return Common::String::format(Res.TRAINING_TEXT, msg.c_str(),
