@@ -271,7 +271,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 			case ITEMMODE_BUY:
 				windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
-					Res.CATEGORY_NAMES[category], party._gold,
+					Res.CATEGORY_NAMES[category], (unsigned long)party._gold,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
@@ -302,7 +302,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			case ITEMMODE_3:
 			case ITEMMODE_5:
 				windows[30].writeString(Common::String::format(Res.X_FOR_Y_GOLD,
-					Res.CATEGORY_NAMES[category], c->_name.c_str(), party._gold, Res.CHARGES,
+					Res.CATEGORY_NAMES[category], c->_name.c_str(), (unsigned long)party._gold, Res.CHARGES,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
@@ -944,7 +944,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				int cost = calcItemCost(&c, itemIndex, mode, 0, category);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				if (Confirm::show(_vm, Common::String::format(Res.BUY_X_FOR_Y_GOLD,
-						desc.c_str(), cost, getGoldPlurals(cost)))) {
+						desc.c_str(), (long)cost, getGoldPlurals(cost)))) {
 					if (party.subtract(CONS_GOLD, cost, WHERE_PARTY, WT_FREEZE_WAIT)) {
 						if (ccNum) {
 							sound.stopSound();
@@ -984,7 +984,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				int cost = calcItemCost(&c, itemIndex, mode, c._skills[MERCHANT], category);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				Common::String msg = Common::String::format(Res.SELL_X_FOR_Y_GOLD,
-					desc.c_str(), cost, getGoldPlurals(cost));
+					desc.c_str(), (long)cost, getGoldPlurals(cost));
 
 				if (Confirm::show(_vm, msg)) {
 					// Remove the sold item and add gold to the party's total
@@ -1022,7 +1022,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				Common::String msg = Common::String::format(Res.FIX_IDENTIFY_GOLD,
 					Res.FIX_IDENTIFY[0],
 					c._items[category].getFullDescription(itemIndex).c_str(),
-					cost, getGoldPlurals(cost));
+					(long)cost, getGoldPlurals(cost));
 
 				if (Confirm::show(_vm, msg) && party.subtract(CONS_GOLD, cost, WHERE_PARTY)) {
 					item._state._broken = false;
@@ -1035,7 +1035,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			Common::String msg = Common::String::format(Res.FIX_IDENTIFY_GOLD,
 				Res.FIX_IDENTIFY[1],
 				c._items[category].getFullDescription(itemIndex).c_str(),
-				cost, getGoldPlurals(cost));
+				(long)cost, getGoldPlurals(cost));
 
 			if (Confirm::show(_vm, msg) && party.subtract(CONS_GOLD, cost, WHERE_PARTY)) {
 				Common::String details = c._items[category].getIdentifiedDetails(itemIndex);
