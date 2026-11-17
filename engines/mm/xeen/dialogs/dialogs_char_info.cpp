@@ -510,7 +510,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 				break;
 
 		msg = Common::String::format(Res.CURRENT_MAXIMUM_RATING_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2, Res.RATING_TEXT[idx]);
+			(unsigned long)stat1, (unsigned long)stat2, Res.RATING_TEXT[idx]);
 		break;
 
 	case 7:
@@ -538,7 +538,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getArmorClass(false);
 		stat2 = c.getArmorClass(true);
 		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2);
+			(unsigned long)stat1, (unsigned long)stat2);
 		bounds.setHeight(42);
 		break;
 
@@ -550,7 +550,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			fmt.setChar('d', p - fmt.c_str() + 1);
 
 		msg = Common::String::format(fmt.c_str(), Res.STAT_NAMES[attrib],
-			c._currentHp, c.getMaxHP());
+			(long)c._currentHp, (long)c.getMaxHP());
 		bounds.setHeight(42);
 		break;
 	}
@@ -560,7 +560,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c._currentSp;
 		stat2 = c.getMaxSP();
 		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2);
+			(unsigned long)stat1, (unsigned long)stat2);
 		bounds.setHeight(42);
 		break;
 
