@@ -360,15 +360,15 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),
 		c.statColor(c.getStat(ACCURACY), c.getStat(ACCURACY, true)), c.getStat(ACCURACY),
 		c.statColor(c._currentHp, c.getMaxHP()), c._currentHp,
-		c.getCurrentExperience(),
+		(unsigned long)c.getCurrentExperience(),
 		c.statColor(c.getStat(INTELLECT), c.getStat(INTELLECT, true)), c.getStat(INTELLECT),
 		c.statColor(c.getStat(LUCK), c.getStat(LUCK, true)), c.getStat(LUCK),
 		c.statColor(c._currentSp, c.getMaxSP()), c._currentSp,
-		party._gold,
+		(unsigned long)party._gold,
 		c.statColor(c.getStat(PERSONALITY), c.getStat(PERSONALITY, true)), c.getStat(PERSONALITY),
 		c.statColor(c.getAge(), c.getAge(true)), c.getAge(),
 		totalResist,
-		party._gems,
+		(unsigned long)party._gems,
 		c.statColor(c.getStat(ENDURANCE), c.getStat(ENDURANCE, true)), c.getStat(ENDURANCE),
 		c.statColor(c.getCurrentLevel(), c._level._permanent), c.getCurrentLevel(),
 		c.getNumSkills(),
@@ -620,7 +620,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getCurrentExperience();
 		stat2 = c.experienceToNextLevel();
 		msg = Common::String::format(Res.EXPERIENCE_TEXT,
-			Res.STAT_NAMES[attrib], stat1,
+			Res.STAT_NAMES[attrib], (unsigned long)stat1,
 			stat2 == 0 ? Res.ELIGIBLE : Common::String::format("%d", stat2).c_str()
 		);
 		bounds.setHeight(43);
@@ -629,14 +629,14 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	case 16:
 		// Gold
 		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[0],
-			party._gold, party._bankGold);
+			(unsigned long)party._gold, (unsigned long)party._bankGold);
 		bounds.setHeight(43);
 		break;
 
 	case 17:
 		// Gems
 		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[1],
-			party._gems, party._bankGems);
+			(unsigned long)party._gems, (unsigned long)party._bankGems);
 		bounds.setHeight(43);
 		break;
 
