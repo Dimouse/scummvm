@@ -98,6 +98,11 @@ private:
 public:
 	bool _enabled;
 public:
+	/**
+	 * Returns the width of the area text is written within
+	 */
+	int getInnerWidth() const { return _innerBounds.width(); }
+
 	Window();
 	Window(const Window &src);
 	Window(const Common::Rect &bounds, int a, int border,
