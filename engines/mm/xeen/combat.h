@@ -156,6 +156,7 @@ public:
 	SpriteResource _powSprites;
 	int _attackMonsters[ATTACK_MONSTERS_COUNT];
 	int _monster2Attack;
+	int _monsterNameLine[3];	// Starting text line of each attacking monster's name (Russian layout)
 	PowSlots _pow;
 	int _missedShot[8];
 	Common::Array<int> _speedTable;
