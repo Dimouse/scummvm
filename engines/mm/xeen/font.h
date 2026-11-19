@@ -118,6 +118,13 @@ public:
 	 */
 	const char *writeString(const Common::String &s, const Common::Rect &clipRect, bool ttsVoiceText = true, Common::String *ttsMessage = nullptr);
 	bool isSpace(char c);
+
+	/**
+	 * Returns the pixel width of a string (control codes are skipped)
+	 * @param s			String to measure
+	 * @param reduced	Whether to measure using the reduced font
+	 */
+	int getTextWidth(const Common::String &s, bool reduced);
 	/**
 	 * Write a charcter to the window
 	 * @param c			Character
