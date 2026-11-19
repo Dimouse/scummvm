@@ -1663,7 +1663,8 @@ void Interface::doCombat() {
 			w.writeString(combat.getMonsterDescriptions(), ttsVoiceText, &ttsMessage);
 			ttsVoiceText = false;
 
-			_combatIcons.draw(0, 32, Common::Point(233, combat._attackDurationCtr * 10 + 27),
+			_combatIcons.draw(0, 32, Common::Point(233, (_vm->getLanguage() == Common::RU_RUS ?
+				combat._monsterNameLine[combat._attackDurationCtr] * 9 : combat._attackDurationCtr * 10) + 27),
 				SPRFLAG_800, 0);
 			w.update();
 
