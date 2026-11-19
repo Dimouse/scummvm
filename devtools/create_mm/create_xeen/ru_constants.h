@@ -148,7 +148,7 @@ public:
 	}
 
 	const char **GAME_NAMES() {
-		static const char *_gameNames[] = { "\x8E\xA1\xAB\xA0\xAA\xA0", "Darkside", "World" }; // "Облака", "Darkside", "World"
+		static const char *_gameNames[] = { "\x8E\xA1\xAB\xA0\xAA\xA0", "\x91\xE3\xAC\xA5\xE0\xAA\xA8", "\x8C\xA8\xE0" }; // "Облака", "Сумерки", "Мир"
 		return _gameNames;
 	}
 
@@ -763,11 +763,11 @@ public:
 	}
 
 	const char *WORLD_GAME_TEXT() {
-		return "World";
+		return "\x8C\xA8\xE0"; // "Мир"
 	}
 
 	const char *DARKSIDE_GAME_TEXT() {
-		return "Darkside";
+		return "\x91\xE3\xAC\xA5\xE0\xAA\xA8"; // "Сумерки"
 	}
 
 	const char *CLOUDS_GAME_TEXT() {
@@ -1141,56 +1141,56 @@ public:
 			"\x8A\xE3\xAA\xAB\xA0 \x8C\xA5\xE2\xAA\xAE\xE1\xE2\xA8",                                                                                   // "Кукла Меткости",
 			"\x8A\xE3\xAA\xAB\xA0 \x93\xA4\xA0\xE7\xA8",                                                                                               // "Кукла Удачи",
 			"\x93\xE1\xE2\xE0\xAE\xA9\xE1\xE2\xA2\xAE",                                                                                                // "Устройство",
-			"Pass to Castleview",                                                                                                                      // "Pass to Castleview",
-			"Pass to Sandcaster",                                                                                                                      // "Pass to Sandcaster",
-			"Pass to Lakeside",                                                                                                                        // "Pass to Lakeside",
-			"Pass to Necropolis",                                                                                                                      // "Pass to Necropolis",
-			"Pass to Olympus",                                                                                                                         // "Pass to Olympus",
-			"Key to Great Western Tower",                                                                                                              // "Key to Great Western Tower",
-			"Key to Great Southern Tower",                                                                                                             // "Key to Great Southern Tower",
-			"Key to Great Eastern Tower",                                                                                                              // "Key to Great Eastern Tower",
-			"Key to Great Northern Tower",                                                                                                             // "Key to Great Northern Tower",
-			"Key to Ellinger's Tower",                                                                                                                 // "Key to Ellinger's Tower",
-			"Key to Dragon Tower",                                                                                                                     // "Key to Dragon Tower",
-			"Key to Darkstone Tower",                                                                                                                  // "Key to Darkstone Tower",
-			"Key to Temple of Bark",                                                                                                                   // "Key to Temple of Bark",
-			"Key to Dungeon of Lost Souls",                                                                                                            // "Key to Dungeon of Lost Souls",
-			"Key to Ancient Pyramid",                                                                                                                  // "Key to Ancient Pyramid",
-			"Key to Dungeon of Death",                                                                                                                 // "Key to Dungeon of Death",
-			"Amulet of the Southern Sphinx",                                                                                                           // "Amulet of the Southern Sphinx",
-			"Dragon Pharoah's Orb",                                                                                                                    // "Dragon Pharoah's Orb",
-			"Cube of Power",                                                                                                                           // "Cube of Power",
-			"Chime of Opening",                                                                                                                        // "Chime of Opening",
-			"Gold ID Card",                                                                                                                            // "Gold ID Card",
-			"Silver ID Card",                                                                                                                          // "Silver ID Card",
-			"Vulture Repellant",                                                                                                                       // "Vulture Repellant",
-			"Bridle",                                                                                                                                  // "Bridle",
-			"Enchanted Bridle",                                                                                                                        // "Enchanted Bridle",
-			"Treasure Map (Goto E1 x1, y11)",                                                                                                          // "Treasure Map (Goto E1 x1, y11)",
+			"\x8F\xE0\xAE\xAF\xE3\xE1\xAA \xA2 \x8A\xA0\xE1\xAB\xA2\xEC\xEE", // "Пропуск в Каслвью"
+			"\x8F\xE0\xAE\xAF\xE3\xE1\xAA \xA2 \x91\xED\xAD\xA4\xAA\xA0\xE1\xE2\xA5\xE0", // "Пропуск в Сэндкастер"
+			"\x8F\xE0\xAE\xAF\xE3\xE1\xAA \xA2 \x8B\xA5\xA9\xAA\xE1\xA0\xA9\xA4", // "Пропуск в Лейксайд"
+			"\x8F\xE0\xAE\xAF\xE3\xE1\xAA \xA2 \x8D\xA5\xAA\xE0\xAE\xAF\xAE\xAB\xA8\xE1", // "Пропуск в Некрополис"
+			"\x8F\xE0\xAE\xAF\xE3\xE1\xAA \xAD\xA0 \x8E\xAB\xA8\xAC\xAF", // "Пропуск на Олимп"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x82\xA5\xAB\xA8\xAA\xAE\xA9 \x87\xA0\xAF\xA0\xA4\xAD\xAE\xA9 \x81\xA0\xE8\xAD\xA8", // "Ключ от Великой Западной Башни"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x82\xA5\xAB\xA8\xAA\xAE\xA9 \x9E\xA6\xAD\xAE\xA9 \x81\xA0\xE8\xAD\xA8", // "Ключ от Великой Южной Башни"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x82\xA5\xAB\xA8\xAA\xAE\xA9 \x82\xAE\xE1\xE2\xAE\xE7\xAD\xAE\xA9 \x81\xA0\xE8\xAD\xA8", // "Ключ от Великой Восточной Башни"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x82\xA5\xAB\xA8\xAA\xAE\xA9 \x91\xA5\xA2\xA5\xE0\xAD\xAE\xA9 \x81\xA0\xE8\xAD\xA8", // "Ключ от Великой Северной Башни"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x81\xA0\xE8\xAD\xA8 \x9D\xAB\xAB\xA8\xAD\xA3\xA5\xE0\xA0", // "Ключ от Башни Эллингера"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x84\xE0\xA0\xAA\xAE\xAD\xEC\xA5\xA9 \x81\xA0\xE8\xAD\xA8", // "Ключ от Драконьей Башни"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x81\xA0\xE8\xAD\xA8 \x92\xF1\xAC\xAD\xAE\xA3\xAE \x8A\xA0\xAC\xAD\xEF", // "Ключ от Башни Тёмного Камня"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x95\xE0\xA0\xAC\xA0 \x81\xA0\xE0\xAA\xA0", // "Ключ от Храма Барка"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x8F\xAE\xA4\xA7\xA5\xAC\xA5\xAB\xEC\xEF \x8F\xAE\xE2\xA5\xE0\xEF\xAD\xAD\xEB\xE5 \x84\xE3\xE8", // "Ключ от Подземелья Потерянных Душ"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x84\xE0\xA5\xA2\xAD\xA5\xA9 \x8F\xA8\xE0\xA0\xAC\xA8\xA4\xEB", // "Ключ от Древней Пирамиды"
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x8F\xAE\xA4\xA7\xA5\xAC\xA5\xAB\xEC\xEF \x91\xAC\xA5\xE0\xE2\xA8", // "Ключ от Подземелья Смерти"
+			"\x80\xAC\xE3\xAB\xA5\xE2 \x9E\xA6\xAD\xAE\xA3\xAE \x91\xE4\xA8\xAD\xAA\xE1\xA0", // "Амулет Южного Сфинкса"
+			"\x98\xA0\xE0 \x84\xE0\xA0\xAA\xAE\xAD\xA0 \x94\xA0\xE0\xA0\xAE\xAD\xA0", // "Шар Дракона Фараона"
+			"\x8A\xE3\xA1 \x91\xA8\xAB\xEB", // "Куб Силы"
+			"\x8E\xE2\xAF\xA8\xE0\xA0\xEE\xE9\xA8\xA9 \x8A\xAE\xAB\xAE\xAA\xAE\xAB\xEC\xE7\xA8\xAA", // "Отпирающий Колокольчик"
+			"\x87\xAE\xAB\xAE\xE2\xA0\xEF \x8A\xA0\xE0\xE2\xA0 \x84\xAE\xE1\xE2\xE3\xAF\xA0", // "Золотая Карта Доступа"
+			"\x91\xA5\xE0\xA5\xA1\xE0\xEF\xAD\xA0\xEF \x8A\xA0\xE0\xE2\xA0 \x84\xAE\xE1\xE2\xE3\xAF\xA0", // "Серебряная Карта Доступа"
+			"\x8E\xE2\xAF\xE3\xA3\xA8\xA2\xA0\xE2\xA5\xAB\xEC \x91\xE2\xA5\xE0\xA2\xEF\xE2\xAD\xA8\xAA\xAE\xA2", // "Отпугиватель Стервятников"
+			"\x93\xA7\xA4\xA5\xE7\xAA\xA0", // "Уздечка"
+			"\x87\xA0\xE7\xA0\xE0\xAE\xA2\xA0\xAD\xAD\xA0\xEF \x93\xA7\xA4\xA5\xE7\xAA\xA0", // "Зачарованная Уздечка"
+			"\x8A\xA0\xE0\xE2\xA0 \x91\xAE\xAA\xE0\xAE\xA2\xA8\xE9 (\x88\xE9\xA8 \xAD\xA0 \x85""1 \xE5""1, \xE3""11)", // "Карта Сокровищ (Ищи на Е1 х1, у11)"
 			"",                                                                                                                                        // "",
-			"Fake Map",                                                                                                                                // "Fake Map",
-			"Onyx Necklace",                                                                                                                           // "Onyx Necklace",
-			"Dragon Egg",                                                                                                                              // "Dragon Egg",
-			"Tribble",                                                                                                                                 // "Tribble",
-			"Golden Pegasus Statuette",                                                                                                                // "Golden Pegasus Statuette",
-			"Golden Dragon Statuette",                                                                                                                 // "Golden Dragon Statuette",
-			"Golden Griffin Statuette",                                                                                                                // "Golden Griffin Statuette",
-			"Chalice of Protection",                                                                                                                   // "Chalice of Protection",
-			"Jewel of Ages",                                                                                                                           // "Jewel of Ages",
-			"Songbird of Serenity",                                                                                                                    // "Songbird of Serenity",
-			"Sandro's Heart",                                                                                                                          // "Sandro's Heart",
-			"Ector's Ring",                                                                                                                            // "Ector's Ring",
-			"Vespar's Emerald Handle",                                                                                                                 // "Vespar's Emerald Handle",
-			"Queen Kalindra's Crown",                                                                                                                  // "Queen Kalindra's Crown",
-			"Caleb's Magnifying Glass",                                                                                                                // "Caleb's Magnifying Glass",
-			"Soul Box",                                                                                                                                // "Soul Box",
-			"Soul Box with Corak inside",                                                                                                              // "Soul Box with Corak inside",
-			"Ruby Rock",                                                                                                                               // "Ruby Rock",
-			"Emerald Rock",                                                                                                                            // "Emerald Rock",
-			"Sapphire Rock",                                                                                                                           // "Sapphire Rock",
-			"Diamond Rock",                                                                                                                            // "Diamond Rock",
-			"Monga Melon",                                                                                                                             // "Monga Melon",
-			"Energy Disk"                                                                                                                              // "Energy Disk"
+			"\x94\xA0\xAB\xEC\xE8\xA8\xA2\xA0\xEF \x8A\xA0\xE0\xE2\xA0", // "Фальшивая Карта"
+			"\x8E\xAD\xA8\xAA\xE1\xAE\xA2\xAE\xA5 \x8E\xA6\xA5\xE0\xA5\xAB\xEC\xA5", // "Ониксовое Ожерелье"
+			"\x84\xE0\xA0\xAA\xAE\xAD\xEC\xA5 \x9F\xA9\xE6\xAE", // "Драконье Яйцо"
+			"\x92\xE0\xA8\xA1\xAB", // "Трибл"
+			"\x87\xAE\xAB\xAE\xE2\xA0\xEF \x91\xE2\xA0\xE2\xE3\xED\xE2\xAA\xA0 \x8F\xA5\xA3\xA0\xE1\xA0", // "Золотая Статуэтка Пегаса"
+			"\x87\xAE\xAB\xAE\xE2\xA0\xEF \x91\xE2\xA0\xE2\xE3\xED\xE2\xAA\xA0 \x84\xE0\xA0\xAA\xAE\xAD\xA0", // "Золотая Статуэтка Дракона"
+			"\x87\xAE\xAB\xAE\xE2\xA0\xEF \x91\xE2\xA0\xE2\xE3\xED\xE2\xAA\xA0 \x83\xE0\xA8\xE4\xAE\xAD\xA0", // "Золотая Статуэтка Грифона"
+			"\x97\xA0\xE8\xA0 \x87\xA0\xE9\xA8\xE2\xEB", // "Чаша Защиты"
+			"\x91\xA0\xAC\xAE\xE6\xA2\xA5\xE2 \x82\xA5\xAA\xAE\xA2", // "Самоцвет Веков"
+			"\x8F\xA5\xA2\xE7\xA0\xEF \x8F\xE2\xA8\xE6\xA0 \x81\xA5\xA7\xAC\xEF\xE2\xA5\xA6\xAD\xAE\xE1\xE2\xA8", // "Певчая Птица Безмятежности"
+			"\x91\xA5\xE0\xA4\xE6\xA5 \x91\xA0\xAD\xA4\xE0\xAE", // "Сердце Сандро"
+			"\x8A\xAE\xAB\xEC\xE6\xAE \x9D\xAA\xE2\xAE\xE0\xA0", // "Кольцо Эктора"
+			"\x88\xA7\xE3\xAC\xE0\xE3\xA4\xAD\xA0\xEF \x90\xE3\xAA\xAE\xEF\xE2\xEC \x82\xA5\xE1\xAF\xA0\xE0\xA0", // "Изумрудная Рукоять Веспара"
+			"\x8A\xAE\xE0\xAE\xAD\xA0 \x8A\xAE\xE0\xAE\xAB\xA5\xA2\xEB \x8A\xA0\xAB\xA8\xAD\xA4\xE0\xEB", // "Корона Королевы Калиндры"
+			"\x8B\xE3\xAF\xA0 \x8A\xA0\xAB\xA5\xA1\xA0", // "Лупа Калеба"
+			"\x98\xAA\xA0\xE2\xE3\xAB\xAA\xA0 \x84\xE3\xE8", // "Шкатулка Душ"
+			"\x98\xAA\xA0\xE2\xE3\xAB\xAA\xA0 \x84\xE3\xE8 \xE1 \x8A\xAE\xE0\xA0\xAA\xAE\xAC \xA2\xAD\xE3\xE2\xE0\xA8", // "Шкатулка Душ с Кораком внутри"
+			"\x90\xE3\xA1\xA8\xAD\xAE\xA2\xEB\xA9 \x8A\xA0\xAC\xA5\xAD\xEC", // "Рубиновый Камень"
+			"\x88\xA7\xE3\xAC\xE0\xE3\xA4\xAD\xEB\xA9 \x8A\xA0\xAC\xA5\xAD\xEC", // "Изумрудный Камень"
+			"\x91\xA0\xAF\xE4\xA8\xE0\xAE\xA2\xEB\xA9 \x8A\xA0\xAC\xA5\xAD\xEC", // "Сапфировый Камень"
+			"\x80\xAB\xAC\xA0\xA7\xAD\xEB\xA9 \x8A\xA0\xAC\xA5\xAD\xEC", // "Алмазный Камень"
+			"\x84\xEB\xAD\xEF \x8C\xAE\xAD\xA3\xA0", // "Дыня Монга"
+			"\x9D\xAD\xA5\xE0\xA3\xA5\xE2\xA8\xE7\xA5\xE1\xAA\xA8\xA9 \x84\xA8\xE1\xAA" // "Энергетический Диск"
 		};
 		return _questItemNames;
 	}
@@ -1427,7 +1427,7 @@ public:
 	}
 
 	const char *DARKSIDE_OF_XEEN_LINE() {
-		return "\b \b*-- \f04Darkside of Xeen\fd --";
+		return "\b \b*-- \f04\x91\xE3\xAC\xA5\xE0\xAA\xA8 \x8A\xE1\xA8\xAD\xA0\fd --"; // "\b \b*-- \f04Сумерки Ксина\fd --"
 	}
 
 	const char *SWORDS_OF_XEEN_LINE() {
