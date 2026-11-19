@@ -410,6 +410,21 @@ bool FontSurface::getNextCharWidth(int &total) {
 	}
 }
 
+int FontSurface::getTextWidth(const Common::String &s, bool reduced) {
+	const char *oldDisplayString = _displayString;
+	bool oldReduced = _fontReduced;
+
+	_displayString = s.c_str();
+	_fontReduced = reduced;
+	int total = 0;
+	while (!getNextCharWidth(total)) {
+	}
+
+	_displayString = oldDisplayString;
+	_fontReduced = oldReduced;
+	return total;
+}
+
 bool FontSurface::newLine(const Common::Rect &bounds) {
 	// Move past any spaces currently being pointed to
 	while (isSpace(*_displayString))
