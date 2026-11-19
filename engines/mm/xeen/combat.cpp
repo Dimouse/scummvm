@@ -120,6 +120,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	Common::fill(&_rangeAttacking[0], &_rangeAttacking[MAX_NUM_MONSTERS], false);
 	Common::fill(&_gmonHit[0], &_gmonHit[36], 0);
 	Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], 0);
+	Common::fill(&_monsterNameLine[0], &_monsterNameLine[3], 0);
 	_globalCombat = 0;
 	_whosTurn = -1;
 	_itemFlag = false;
@@ -1166,6 +1167,9 @@ bool Combat::charsCantAct() const {
 Common::String Combat::getMonsterDescriptions() {
 	Map &map = *_vm->_map;
 	Common::String lines[3];
+	bool russian = _vm->getLanguage() == Common::RU_RUS;
+	Window &w = (*_vm->_windows)[2];
+	int currentLine = 0;
 
 	// Get names of monsters attacking, if any
 	for (int idx = 0; idx < 3; ++idx) {
@@ -1174,10 +1178,22 @@ Common::String Combat::getMonsterDescriptions() {
 			MonsterStruct &monsterData = *monster._monsterData;
 			int textColor = monster.getTextColor();
 
-			Common::String format = "\n\v020\f%2u%s\fd";
-			format.setChar('2' + idx, 3);
-			lines[idx] = Common::String::format(format.c_str(), textColor,
-				monsterData._name.c_str());
+			if (russian) {
+				// Russian names are often too long for one line. As in the original
+				// Russian release, each name follows directly after the previous one,
+				// taking two lines if necessary, rather than using fixed rows
+				_monsterNameLine[idx] = currentLine;
+				currentLine += (w.getTextWidth(monsterData._name, true) < w.getInnerWidth()) ? 1 : 2;
+
+				lines[idx] = Common::String::format(_monsterNameLine[idx] == 0 ?
+					"\n\v020\f%2u%s\fd" : "\n\f%2u%s\fd",
+					textColor, monsterData._name.c_str());
+			} else {
+				Common::String format = "\n\v020\f%2u%s\fd";
+				format.setChar('2' + idx, 3);
+				lines[idx] = Common::String::format(format.c_str(), textColor,
+					monsterData._name.c_str());
+			}
 		}
 	}
 
