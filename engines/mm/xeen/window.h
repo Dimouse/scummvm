@@ -99,9 +99,9 @@ public:
 	bool _enabled;
 public:
 	/**
-	 * Returns the width of the area text is written within
+	 * Returns the area text is written within
 	 */
-	int getInnerWidth() const { return _innerBounds.width(); }
+	const Common::Rect &getInnerBounds() const { return _innerBounds; }
 
 	Window();
 	Window(const Window &src);

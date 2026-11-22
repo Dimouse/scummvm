@@ -1660,11 +1660,16 @@ void Interface::doCombat() {
 
 			ttsMessage.clear();
 			// Write out the description of the monsters being battled
-			w.writeString(combat.getMonsterDescriptions(), ttsVoiceText, &ttsMessage);
+			if (_vm->getLanguage() == Common::RU_RUS) {
+				// The names are drawn by getMonsterDescriptions itself
+				combat.getMonsterDescriptions();
+			} else {
+				w.writeString(combat.getMonsterDescriptions(), ttsVoiceText, &ttsMessage);
+			}
 			ttsVoiceText = false;
 
-			_combatIcons.draw(0, 32, Common::Point(233, (_vm->getLanguage() == Common::RU_RUS ?
-				combat._monsterNameLine[combat._attackDurationCtr] * 9 : combat._attackDurationCtr * 10) + 27),
+			_combatIcons.draw(0, 32, Common::Point(233, _vm->getLanguage() == Common::RU_RUS ?
+				combat._monsterNameY[combat._attackDurationCtr] - 2 : combat._attackDurationCtr * 10 + 27),
 				SPRFLAG_800, 0);
 			w.update();
 

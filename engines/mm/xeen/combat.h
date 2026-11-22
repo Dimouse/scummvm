@@ -156,7 +156,8 @@ public:
 	SpriteResource _powSprites;
 	int _attackMonsters[ATTACK_MONSTERS_COUNT];
 	int _monster2Attack;
-	int _monsterNameLine[3];	// Starting text line of each attacking monster's name (Russian layout)
+	Common::String _monsterNameText[3];	// Colored names of the attacking monsters (Russian layout)
+	int _monsterNameY[3];				// Screen Y of each attacking monster's name (Russian layout)
 	PowSlots _pow;
 	int _missedShot[8];
 	Common::Array<int> _speedTable;
@@ -250,6 +251,12 @@ public:
 	 * Return a description of the monsters being faced
 	 */
 	Common::String getMonsterDescriptions();
+
+	/**
+	 * Draws the names of the attacking monsters one after another in the
+	 * combat window (Russian layout), recording where each name starts
+	 */
+	void writeRussianMonsterNames();
 
 	/**
 	 * Main method for characters to attack

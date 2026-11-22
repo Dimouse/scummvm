@@ -120,7 +120,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	Common::fill(&_rangeAttacking[0], &_rangeAttacking[MAX_NUM_MONSTERS], false);
 	Common::fill(&_gmonHit[0], &_gmonHit[36], 0);
 	Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], 0);
-	Common::fill(&_monsterNameLine[0], &_monsterNameLine[3], 0);
+	Common::fill(&_monsterNameY[0], &_monsterNameY[3], 0);
 	_globalCombat = 0;
 	_whosTurn = -1;
 	_itemFlag = false;
@@ -1167,33 +1167,21 @@ bool Combat::charsCantAct() const {
 Common::String Combat::getMonsterDescriptions() {
 	Map &map = *_vm->_map;
 	Common::String lines[3];
-	bool russian = _vm->getLanguage() == Common::RU_RUS;
-	Window &w = (*_vm->_windows)[2];
-	int currentLine = 0;
 
 	// Get names of monsters attacking, if any
 	for (int idx = 0; idx < 3; ++idx) {
+		_monsterNameText[idx].clear();
 		if (_attackMonsters[idx] != -1) {
 			MazeMonster &monster = map._mobData._monsters[_attackMonsters[idx]];
 			MonsterStruct &monsterData = *monster._monsterData;
 			int textColor = monster.getTextColor();
 
-			if (russian) {
-				// Russian names are often too long for one line. As in the original
-				// Russian release, each name follows directly after the previous one,
-				// taking two lines if necessary, rather than using fixed rows
-				_monsterNameLine[idx] = currentLine;
-				currentLine += (w.getTextWidth(monsterData._name, true) < w.getInnerWidth()) ? 1 : 2;
-
-				lines[idx] = Common::String::format(_monsterNameLine[idx] == 0 ?
-					"\n\v020\f%2u%s\fd" : "\n\f%2u%s\fd",
-					textColor, monsterData._name.c_str());
-			} else {
-				Common::String format = "\n\v020\f%2u%s\fd";
-				format.setChar('2' + idx, 3);
-				lines[idx] = Common::String::format(format.c_str(), textColor,
-					monsterData._name.c_str());
-			}
+			Common::String format = "\n\v020\f%2u%s\fd";
+			format.setChar('2' + idx, 3);
+			lines[idx] = Common::String::format(format.c_str(), textColor,
+				monsterData._name.c_str());
+			_monsterNameText[idx] = Common::String::format("\f%2u%s\fd", textColor,
+				monsterData._name.c_str());
 		}
 	}
 
@@ -1206,8 +1194,59 @@ Common::String Combat::getMonsterDescriptions() {
 		_attackDurationCtr = 0;
 	}
 
+	if (_vm->getLanguage() == Common::RU_RUS)
+		writeRussianMonsterNames();
+
 	return Common::String::format(Res.COMBAT_DETAILS, lines[0].c_str(),
 		lines[1].c_str(), lines[2].c_str());
+}
+
+void Combat::writeRussianMonsterNames() {
+	// Russian monster names are often too long for one line. As in the original
+	// Russian release, each name follows directly below the previous one, taking
+	// two lines if necessary, instead of using fixed rows 10 pixels apart.
+	// The names are drawn here and their actual positions are recorded, so that
+	// the frame around the attacking monster can be placed on its name
+	Window &w = (*_vm->_windows)[2];
+	const Common::Rect &bounds = w.getInnerBounds();
+
+	Common::String details(Res.COMBAT_DETAILS);
+	size_t firstParam = details.find("%s");
+	if (firstParam == Common::String::npos)
+		return;
+	size_t lastParam = firstParam;
+	for (size_t pos = details.find("%s", firstParam + 2); pos != Common::String::npos;
+			pos = details.find("%s", pos + 2))
+		lastParam = pos;
+	Common::String header(details.c_str(), firstParam);
+	Common::String trailer(details.c_str() + lastParam + 2);
+
+	// First pass: start at the top of the window, so even three two-line
+	// names fit, and find out how many lines are actually used
+	int lastY = bounds.top;
+	for (int pass = 0; pass < 2; ++pass) {
+		int startY = 0;
+		if (pass == 1) {
+			// Second pass: same 20 pixel offset as the original layout when it
+			// fits, otherwise moved up just enough for every line to fit
+			int usedHeight = lastY + 9 - bounds.top;
+			startY = MAX(0, MIN(20, (int)bounds.height() - usedHeight));
+		}
+
+		w.writeString(header, false);
+		bool first = true;
+		for (int idx = 0; idx < 3; ++idx) {
+			if (_monsterNameText[idx].empty())
+				continue;
+
+			w.writeString(first ? Common::String::format("\v%03d", startY) : Common::String("\n"), false);
+			first = false;
+			_monsterNameY[idx] = w._writePos.y;
+			w.writeString(_monsterNameText[idx], false);
+			lastY = w._writePos.y;
+		}
+		w.writeString(trailer, false);
+	}
 }
 
 void Combat::attack(Character &c, RangeType rangeType) {
