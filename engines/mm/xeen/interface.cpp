@@ -349,9 +349,19 @@ void Interface::setMainButtons(IconsMode mode) {
 	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, spr);
 	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, spr);
 	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS);
-	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1, nullptr, kCombatMonster1);
-	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2, nullptr, kCombatMonster2);
-	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3, nullptr, kCombatMonster3);
+	if (_vm->getLanguage() == Common::RU_RUS) {
+		// Russian monster names take two lines each
+		Combat &combat = *_vm->_combat;
+		for (int idx = 0; idx < 3; ++idx) {
+			int y = combat.getRussianMonsterNameY(idx);
+			addButton(Common::Rect(239, y - 2, 312, y + 16), Common::KEYCODE_1 + idx, nullptr,
+				kCombatMonster1 + idx);
+		}
+	} else {
+		addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1, nullptr, kCombatMonster1);
+		addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2, nullptr, kCombatMonster2);
+		addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3, nullptr, kCombatMonster3);
+	}
 	addPartyButtons(_vm);
 
 	if (mode == ICONS_COMBAT) {
@@ -1660,10 +1670,16 @@ void Interface::doCombat() {
 
 			ttsMessage.clear();
 			// Write out the description of the monsters being battled
-			w.writeString(combat.getMonsterDescriptions(), ttsVoiceText, &ttsMessage);
+			if (_vm->getLanguage() == Common::RU_RUS) {
+				combat.getMonsterDescriptions();
+				combat.writeRussianMonsterNames(ttsVoiceText, &ttsMessage);
+			} else {
+				w.writeString(combat.getMonsterDescriptions(), ttsVoiceText, &ttsMessage);
+			}
 			ttsVoiceText = false;
 
-			_combatIcons.draw(0, 32, Common::Point(233, combat._attackDurationCtr * 10 + 27),
+			_combatIcons.draw(0, 32, Common::Point(233, _vm->getLanguage() == Common::RU_RUS ?
+				combat.getRussianMonsterNameY(combat._attackDurationCtr) - 2 : combat._attackDurationCtr * 10 + 27),
 				SPRFLAG_800, 0);
 			w.update();
 
@@ -1713,7 +1729,8 @@ void Interface::doCombat() {
 					combat._monster2Attack = combat._attackMonsters[_buttonValue];
 					combat._attackDurationCtr = _buttonValue;
 #ifdef USE_TTS
-					_vm->sayText(_buttonTexts[_buttonValue], Common::TextToSpeechManager::INTERRUPT);
+					if (_buttonValue < (int)_buttonTexts.size())
+						_vm->sayText(_buttonTexts[_buttonValue], Common::TextToSpeechManager::INTERRUPT);
 #endif
 				}
 				break;

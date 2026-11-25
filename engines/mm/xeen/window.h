@@ -98,6 +98,11 @@ private:
 public:
 	bool _enabled;
 public:
+	/**
+	 * Returns the area text is written within
+	 */
+	const Common::Rect &getInnerBounds() const { return _innerBounds; }
+
 	Window();
 	Window(const Window &src);
 	Window(const Common::Rect &bounds, int a, int border,

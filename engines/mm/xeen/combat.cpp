@@ -1169,6 +1169,7 @@ Common::String Combat::getMonsterDescriptions() {
 
 	// Get names of monsters attacking, if any
 	for (int idx = 0; idx < 3; ++idx) {
+		_monsterNameText[idx].clear();
 		if (_attackMonsters[idx] != -1) {
 			MazeMonster &monster = map._mobData._monsters[_attackMonsters[idx]];
 			MonsterStruct &monsterData = *monster._monsterData;
@@ -1178,6 +1179,8 @@ Common::String Combat::getMonsterDescriptions() {
 			format.setChar('2' + idx, 3);
 			lines[idx] = Common::String::format(format.c_str(), textColor,
 				monsterData._name.c_str());
+			_monsterNameText[idx] = monsterData._name;
+			_monsterNameColor[idx] = textColor;
 		}
 	}
 
@@ -1192,6 +1195,49 @@ Common::String Combat::getMonsterDescriptions() {
 
 	return Common::String::format(Res.COMBAT_DETAILS, lines[0].c_str(),
 		lines[1].c_str(), lines[2].c_str());
+}
+
+int Combat::getRussianMonsterNameY(int idx) const {
+	// Russian monster names are often too long for one line, so, as in the
+	// original Russian release, every monster gets two lines (18 pixels) instead
+	// of the fixed 10 pixel rows. All three fit when started near the top
+	const Common::Rect &bounds = (*_vm->_windows)[2].getInnerBounds();
+	int startY = MAX(0, MIN(20, (int)bounds.height() - 3 * 18));
+	return bounds.top + startY + idx * 18;
+}
+
+void Combat::writeRussianMonsterNames(bool ttsVoiceText, Common::String *ttsMessage) {
+	Window &w = (*_vm->_windows)[2];
+	const Common::Rect &bounds = w.getInnerBounds();
+
+	Common::String details(Res.COMBAT_DETAILS);
+	size_t firstParam = details.find("%s");
+	if (firstParam == Common::String::npos)
+		return;
+	size_t lastParam = firstParam;
+	for (size_t pos = details.find("%s", firstParam + 2); pos != Common::String::npos;
+			pos = details.find("%s", pos + 2))
+		lastParam = pos;
+	Common::String header(details.c_str(), firstParam);
+	Common::String trailer(details.c_str() + lastParam + 2);
+
+	w.writeString(header, false, ttsMessage);
+	for (int idx = 0; idx < 3; ++idx) {
+		if (_monsterNameText[idx].empty())
+			continue;
+
+		// \t000 returns to the left edge, so the name is centered across the whole
+		// window rather than relative to where the previous name ended
+		w.writeString(Common::String::format("\t000\v%03d\f%2u%s\fd", getRussianMonsterNameY(idx) - bounds.top,
+			_monsterNameColor[idx], _monsterNameText[idx].c_str()),
+			false, ttsMessage);
+	}
+	w.writeString(trailer, false, ttsMessage);
+
+#ifdef USE_TTS
+	if (ttsVoiceText && ttsMessage)
+		_vm->sayText(*ttsMessage);
+#endif
 }
 
 void Combat::attack(Character &c, RangeType rangeType) {

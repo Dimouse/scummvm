@@ -75,6 +75,7 @@ enum RangeType {
 };
 
 class XeenEngine;
+class Window;
 class Character;
 class XeenItem;
 class MonsterStruct;
@@ -156,6 +157,8 @@ public:
 	SpriteResource _powSprites;
 	int _attackMonsters[ATTACK_MONSTERS_COUNT];
 	int _monster2Attack;
+	Common::String _monsterNameText[3];	// Names of the attacking monsters (Russian layout)
+	int _monsterNameColor[3];			// Text colors of the attacking monsters' names (Russian layout)
 	PowSlots _pow;
 	int _missedShot[8];
 	Common::Array<int> _speedTable;
@@ -249,6 +252,18 @@ public:
 	 * Return a description of the monsters being faced
 	 */
 	Common::String getMonsterDescriptions();
+
+	/**
+	 * Draws the names of the attacking monsters in the combat window
+	 * (Russian layout: two lines per monster)
+	 */
+	void writeRussianMonsterNames(bool ttsVoiceText, Common::String *ttsMessage);
+
+	/**
+	 * Returns the screen Y position of the given attacking monster's name
+	 * (Russian layout: two lines per monster)
+	 */
+	int getRussianMonsterNameY(int idx) const;
 
 	/**
 	 * Main method for characters to attack
