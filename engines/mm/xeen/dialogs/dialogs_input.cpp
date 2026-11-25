@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #include "mm/xeen/dialogs/dialogs_input.h"
 #include "mm/xeen/scripts.h"
 #include "mm/xeen/xeen.h"
@@ -221,7 +220,7 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 	return result;
 }
 
-void toLowercase_rus(Common::String *s) {
+void toLowercase_my(Common::String *s) {
 	uint32 sz = s->size();
 	unsigned char *buf = (unsigned char*)s->begin();
 
@@ -242,6 +241,35 @@ void toLowercase_rus(Common::String *s) {
 	}
 }
 
+/**
+ * Lowercases a Russian (CP866) string and replaces "ё" with "е", so that
+ * mirror destinations match however they are typed
+ */
+static Common::String normalizeRussianMirrorName(const Common::String &name) {
+	Common::String result = name;
+	toLowercase_my(&result);
+	result.toLowercase();
+	for (uint i = 0; i < result.size(); ++i) {
+		if ((byte)result[i] == 0xF0 || (byte)result[i] == 0xF1)
+			result.setChar('\xA5', i);
+	}
+	return result;
+}
+
+/**
+ * Alternate names for Clouds of Xeen mirror destinations, as given in the
+ * Russian manual, mapped to their 1-based mirror index
+ */
+static const struct {
+	const char *_name;
+	int _index;
+} RUSSIAN_MIRROR_ALIASES[] = {
+	{ "\xA2\xA0\xE0\xA2\xA0\xE0\xE1\xAA\xA8\xA5 \xA3\xAE\xE0\xEB", 19 },	// "варварские горы"
+	{ "\xA4\xE0\xA0\xAA\xAE\xAD\xEC\xEF \xA1\xA0\xE8\xAD\xEF", 12 },	// "драконья башня"
+	{ "\xAE\xA3\xE0\xAE\xA2\xEB \xE5\xAE\xAB\xAC\xEB", 22 },	// "огровы холмы"
+	{ "\xA2\xA8\xAB\xAA\xAE\xAE\xA1\xE0\xA0\xA7\xAD\xA0\xEF \xA1\xE3\xE5\xE2\xA0", 23 },	// "вилкообразная бухта"
+};
+
 int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
 	FileManager &files = *_vm->_files;
@@ -256,6 +284,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 	w.update();
 
 	Common::String line;
+		
 	if (getString(line, 30, 200, false)) {
 		if (type) {
 			// WORKAROUND: Fix for incorrect answer for one of the Vowelless Knight riddles
@@ -290,17 +319,28 @@ int StringInput::execute(bool type, const Common::String &expected,
 				f2.close();
 			}
 
-			if (Common::RU_RUS == g_vm->getLanguage() && GType_Clouds == g_vm->getGameID()) {
-				for (uint idx = 0; idx < 59; ++idx) {
-					toLowercase_rus(&line);
-					if (!line.compareToIgnoreCase(Res.CLOUDS_MIRROR_LOCATIONS[idx])) {
+			// Russian destinations on the Clouds side are kept in the engine's
+			// resources rather than in xeenmirr.txt. This applies both to Clouds
+			// of Xeen alone and to the Clouds side of World of Xeen
+			if (Common::RU_RUS == g_vm->getLanguage() && !files._ccNum) {
+				Common::String name = normalizeRussianMirrorName(line);
+
+				for (uint idx = 0; idx < 59 && !result; ++idx) {
+					if (name == normalizeRussianMirrorName(Res.CLOUDS_MIRROR_LOCATIONS[idx]))
 						result = idx + 1;
-						sound.playFX(_vm->_files->_ccNum ? 35 : 61);
-						break;
-					}
 				}
-			} else {
+				for (uint idx = 0; idx < ARRAYSIZE(RUSSIAN_MIRROR_ALIASES) && !result; ++idx) {
+					if (name == normalizeRussianMirrorName(RUSSIAN_MIRROR_ALIASES[idx]._name))
+						result = RUSSIAN_MIRROR_ALIASES[idx]._index;
+				}
+
+				if (result)
+					sound.playFX(61);
+			}
+
+			if (!result) {
 				for (uint idx = 0; idx < scripts._mirror.size(); ++idx) {
+
 					if (!line.compareToIgnoreCase(scripts._mirror[idx]._name)) {
 						result = idx + 1;
 						sound.playFX(_vm->_files->_ccNum ? 35 : 61);
